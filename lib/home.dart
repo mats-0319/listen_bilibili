@@ -43,45 +43,42 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              constraints: BoxConstraints(maxHeight: 330),
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: dataState.list.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Container(
-                        padding: EdgeInsets.only(left: 10, right: 10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          borderRadius: BorderRadiusGeometry.circular(10),
-                        ),
-                        height: 80,
-                        child: Row(
-                          children: [
-                            TextButton(
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => DisplayMusicDialog(
-                                  musicIns: MusicList().list[index],
-                                ),
-                              ),
-                              child: Text(
-                                dataState.list[index].name,
-                                style: blackText(-1),
-                              ),
-                            ),
-                            Spacer(),
-                            ElevatedButton(
-                              onPressed: () => {MusicList().playMusic(index)},
-                              child: Text("播放", style: blackText(-1)),
-                            ),
-                          ],
-                        ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: dataState.list.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Container(
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        borderRadius: BorderRadiusGeometry.circular(10),
                       ),
-                    );
-                  },
-                ),
+                      height: 80,
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (context) => DisplayMusicDialog(
+                                musicIns: MusicList().list[index],
+                              ),
+                            ),
+                            child: Text(
+                              dataState.list[index].name,
+                              style: blackText(-1),
+                            ),
+                          ),
+                          Spacer(),
+                          ElevatedButton(
+                            onPressed: () => {MusicList().playMusic(index)},
+                            child: Text("播放", style: blackText(-1)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

@@ -6,7 +6,7 @@
             android:usesCleartextTraffic="true"
             android:label="listen_b"
             android:name="${applicationName}"
-            android:icon="@mipmap/icon_64">
+            android:icon="@mipmap/icon">
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
