@@ -50,7 +50,7 @@ class AboutPage extends StatelessWidget {
     return Column(
       children: [
         Text("开发者：马同帅", style: greyText(-2)),
-        Text("代码地址：github.com/mats0319/listen_b", style: greyText(-3)),
+        Text("代码地址：github.com/mats0319/listen_bilibili", style: greyText(-3)),
         Text("All Rights Reserved", style: greyText(-3)),
       ],
     );

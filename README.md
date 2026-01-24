@@ -4,10 +4,11 @@
 
 ## 目录
 
-- android：android配置
+- android：android打包配置
 - assets：资源文件
 - doc
 - lib：
+    - data
     - model：数据结构
     - widgets：组件
     - `*.dart`文件：主要页面
