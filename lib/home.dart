@@ -1,5 +1,5 @@
 import 'package:listen_b/model/music_list.dart';
-import 'package:listen_b/theme.dart';
+import 'package:listen_b/data/theme.dart';
 import 'package:listen_b/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_b/widgets/dialog_display_music.dart';
@@ -23,7 +23,10 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            BiliPlayerFixedPage(bv: MusicList().currentMusic().bv),
+            BiliPlayerFixedPage(
+              bv: MusicList().currentMusic().bv,
+              page: MusicList().currentMusic().page,
+            ),
             SizedBox(height: 20),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20),

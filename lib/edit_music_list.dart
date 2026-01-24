@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listen_b/model/music_list.dart';
-import 'package:listen_b/theme.dart';
+import 'package:listen_b/data/theme.dart';
 import 'package:listen_b/widgets/app_bar.dart';
 import 'package:listen_b/widgets/dialog_operate_music.dart';
 import 'package:provider/provider.dart';
@@ -109,6 +109,7 @@ class _MusicInstanceState extends State<_MusicInstance> {
           child: Text("name: ${widget.musicIns.name}", style: blackText(-2)),
         ),
         Text("bv: ${widget.musicIns.bv}", style: blackText(-2)),
+        Text("page: ${widget.musicIns.page}", style: blackText(-2)),
         Text("volume: ${widget.musicIns.volume}", style: blackText(-2)),
       ],
     );

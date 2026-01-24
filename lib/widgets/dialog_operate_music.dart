@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:listen_b/model/music.dart';
 import 'package:listen_b/model/music_list.dart';
-import 'package:listen_b/theme.dart';
+import 'package:listen_b/data/theme.dart';
 import 'package:listen_b/widgets/dialog_display_music.dart';
 
 enum Operate { create, edit }
@@ -29,6 +29,12 @@ class _OperateMusicDialogState extends State<OperateMusicDialog> {
   void _onBvChanged(String value) {
     setState(() {
       widget.musicIns.bv = value;
+    });
+  }
+
+  void _onPageChanged(String value) {
+    setState(() {
+      widget.musicIns.page = int.tryParse(value) ?? 1;
     });
   }
 
@@ -61,6 +67,12 @@ class _OperateMusicDialogState extends State<OperateMusicDialog> {
               label: "bv",
               initValue: widget.musicIns.bv,
               onChanged: _onBvChanged,
+            ),
+            SizedBox(height: 20),
+            _Input(
+              label: "page",
+              initValue: widget.musicIns.page.toString(),
+              onChanged: _onPageChanged,
             ),
             SizedBox(height: 20),
             _Input(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:listen_b/data/playlist.dart';
 import 'package:listen_b/home.dart';
-import 'package:listen_b/theme.dart';
+import 'package:listen_b/data/theme.dart';
 import 'package:provider/provider.dart';
 
-import 'model/music.dart';
 import 'model/music_list.dart';
 
 void main() async {
@@ -16,18 +16,9 @@ void main() async {
 
 Future<void> _addDemoMusicIns() async {
   if (MusicList().list.isEmpty) {
-    await MusicList().create(
-      Music("故风吟游之地", "BV1Fer3YyE3n", 0),
-      atFirst: false,
-    );
-    await MusicList().create(
-      Music("当飞鸟划过天空", "BV1sRj1zcEhV", -10),
-      atFirst: false,
-    );
-    await MusicList().create(
-      Music("Unwritten in the stars", "BV1JtrKBXE9Y", -5),
-      atFirst: false,
-    );
+    for (var i = 0; i < playlist.length; i++) {
+      await MusicList().create(playlist[i], atFirst: false);
+    }
   }
 }
 

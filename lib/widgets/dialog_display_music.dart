@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:listen_b/model/music.dart';
 
-import 'package:listen_b/theme.dart';
+import 'package:listen_b/data/theme.dart';
 
 class DisplayMusicDialog extends StatefulWidget {
   DisplayMusicDialog({super.key, required this.musicIns});
@@ -29,6 +29,8 @@ class _DisplayMusicDialog extends State<DisplayMusicDialog> {
             InputReadonly(text: widget.musicIns.name),
             SizedBox(height: 20),
             InputReadonly(text: widget.musicIns.bv),
+            SizedBox(height: 20),
+            InputReadonly(text: widget.musicIns.page.toString()),
             SizedBox(height: 20),
             InputReadonly(text: widget.musicIns.volume.toString()),
           ],

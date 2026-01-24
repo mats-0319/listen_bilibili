@@ -4,8 +4,9 @@ import 'package:listen_b/model/music_list.dart';
 
 class BiliPlayerFixedPage extends StatefulWidget {
   final String bv;
+  final int page;
 
-  const BiliPlayerFixedPage({super.key, required this.bv});
+  const BiliPlayerFixedPage({super.key, required this.bv, required this.page});
 
   @override
   State<BiliPlayerFixedPage> createState() => _BiliPlayerFixedPageState();
@@ -14,22 +15,22 @@ class BiliPlayerFixedPage extends StatefulWidget {
 class _BiliPlayerFixedPageState extends State<BiliPlayerFixedPage> {
   InAppWebViewController? webViewController;
 
-  void playNewVideo(String newBv) {
+  void playNewVideo(String newBv, int page) {
     if (webViewController != null) {
-      webViewController!.loadUrl(urlRequest: genUrlRequest(newBv));
+      webViewController!.loadUrl(urlRequest: genUrlRequest(newBv, page));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    playNewVideo(widget.bv);
+    playNewVideo(widget.bv, widget.page);
 
     return Column(
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
           child: InAppWebView(
-            initialUrlRequest: genUrlRequest(widget.bv),
+            initialUrlRequest: genUrlRequest(widget.bv, widget.page),
             initialSettings: InAppWebViewSettings(
               javaScriptEnabled: true,
               mediaPlaybackRequiresUserGesture: false, // 关键点 2：允许非手势播放
@@ -83,10 +84,10 @@ class _BiliPlayerFixedPageState extends State<BiliPlayerFixedPage> {
   }
 }
 
-URLRequest genUrlRequest(String bv) {
+URLRequest genUrlRequest(String bv, int page) {
   return URLRequest(
     url: WebUri(
-      "https://player.bilibili.com/player.html?bvid=$bv&page=1&autoplay=1&muted=0",
+      "https://player.bilibili.com/player.html?bvid=$bv&page=$page&autoplay=1&muted=0",
     ),
     // 每次切换视频都必须带上这个 Header，否则会加载失败
     headers: {'Referer': 'https://www.bilibili.com/'},
