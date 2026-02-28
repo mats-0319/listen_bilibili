@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "歌曲数量：${dataState.list.length}\n当前播放：${MusicList().currentMusic().name} (${MusicList().currentIndex})",
+                    "歌曲数量：${dataState.list.length}\n当前播放：${MusicList().currentMusic().name} (${MusicList().currentIndex + 1})",
                     style: blackText(-1),
                   ),
                 ],

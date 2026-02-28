@@ -2,25 +2,15 @@
 
 一个听歌软件，使用B站作为音源。
 
-## 目录
-
-- android：android打包配置
-- assets：资源文件
-- doc
-- lib：
-    - data
-    - model：数据结构
-    - widgets：组件
-    - `*.dart`文件：主要页面
-
 ## dev
 
 `flutter clean`
 `flutter pub get`
-`flutter run --release`
+`flutter run --release` 以release模式运行
 
 `flutter build apk --split-per-abi`
-`flutter install --use-application-binary=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk`
+`flutter install --use-application-binary=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` 
+需要开启开发者模式-usb调试-允许usb安装
 
 查看手机cpu架构：（需要手机开启usb调试）
 `adb shell getprop | grep cpu`
