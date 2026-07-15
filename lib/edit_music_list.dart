@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:listen_b/model/music_list.dart';
+import 'package:listen_b/model/music.dart';
 import 'package:listen_b/data/theme.dart';
 import 'package:listen_b/widgets/app_bar.dart';
 import 'package:listen_b/widgets/dialog_operate_music.dart';
-import 'package:provider/provider.dart';
-import 'model/music.dart';
 
 class EditMusicListPage extends StatefulWidget {
   const EditMusicListPage({super.key});
@@ -195,10 +196,7 @@ class _DeleteButton extends StatelessWidget {
         context: context,
         builder: (context) => AlertDialog(
           title: Text("删除歌曲", style: blackText(1)),
-          content: Text(
-            "本次删除不可恢复，请确认是否删除id为：\n$id\n的歌曲?",
-            style: blackText(-1),
-          ),
+          content: Text("本次删除不可恢复，请确认是否删除id为：$id 的歌曲?", style: blackText(-1)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

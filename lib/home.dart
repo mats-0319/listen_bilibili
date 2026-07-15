@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:listen_b/model/music_list.dart';
 import 'package:listen_b/data/theme.dart';
 import 'package:listen_b/widgets/app_bar.dart';
-import 'package:flutter/material.dart';
 import 'package:listen_b/widgets/dialog_display_music.dart';
 import 'package:listen_b/widgets/video.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,13 +24,9 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            BiliPlayerFixedPage(
-              bv: MusicList().currentMusic().bv,
-              page: MusicList().currentMusic().page,
-            ),
-            SizedBox(height: 20),
+            BiliPlayer(musicIns: MusicList().currentMusic()),
             Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onSurface,
                 borderRadius: BorderRadiusGeometry.circular(10),
@@ -39,13 +36,14 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "歌曲数量：${dataState.list.length}\n当前播放：${MusicList().currentMusic().name} (${MusicList().currentIndex + 1})",
+                    "歌曲数量：${dataState.list.length}\n"
+                    "当前播放：${MusicList().currentMusic().name} "
+                    "(${MusicList().currentIndex + 1})",
                     style: blackText(-1),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: dataState.list.length,

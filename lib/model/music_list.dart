@@ -55,15 +55,16 @@ class MusicList extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> create(Music? musicIns, {bool atFirst = true}) async {
+  Future<void> create(Music? musicIns) async {
     if (musicIns != null) {
-      if (atFirst) {
-        list.insert(0, musicIns);
-      } else {
-        list.add(musicIns);
-      }
+      list.insert(0, musicIns);
     }
 
+    await write(list);
+    notifyListeners();
+  }
+
+  Future<void> update() async {
     await write(list);
     notifyListeners();
   }
@@ -100,21 +101,6 @@ class MusicList extends ChangeNotifier {
 
     await write(list);
     notifyListeners();
-  }
-
-  // for dev
-  String display() {
-    String res = "> Music List Length: ${list.length}\n";
-    for (var i = 0; i < list.length; i++) {
-      res +=
-          "> item $i: \n"
-          "  id: ${list[i].id},\n"
-          "  name: ${list[i].name},\n"
-          "  url: ${list[i].bv},\n"
-          "  volume: ${list[i].volume},\n";
-    }
-
-    return res;
   }
 
   // _getIndex return index of target 'id' in this.list,

@@ -1,41 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 import 'package:listen_b/model/music_list.dart';
+import 'package:listen_b/model/music.dart';
 
-class BiliPlayerFixedPage extends StatefulWidget {
-  final String bv;
-  final int page;
+class BiliPlayer extends StatefulWidget {
+  final Music musicIns;
 
-  const BiliPlayerFixedPage({super.key, required this.bv, required this.page});
+  const BiliPlayer({super.key, required this.musicIns});
 
   @override
-  State<BiliPlayerFixedPage> createState() => _BiliPlayerFixedPageState();
+  State<BiliPlayer> createState() => _BiliPlayerState();
 }
 
-class _BiliPlayerFixedPageState extends State<BiliPlayerFixedPage> {
+class _BiliPlayerState extends State<BiliPlayer> {
   InAppWebViewController? webViewController;
 
-  void playNewVideo(String newBv, int page) {
+  void playNewVideo(Music musicIns) {
     if (webViewController != null) {
-      webViewController!.loadUrl(urlRequest: genUrlRequest(newBv, page));
+      webViewController!.loadUrl(urlRequest: genUrlRequest(musicIns));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    playNewVideo(widget.bv, widget.page);
+    playNewVideo(widget.musicIns);
 
     return Column(
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
           child: InAppWebView(
-            initialUrlRequest: genUrlRequest(widget.bv, widget.page),
+            initialUrlRequest: genUrlRequest(widget.musicIns),
             initialSettings: InAppWebViewSettings(
               javaScriptEnabled: true,
-              mediaPlaybackRequiresUserGesture: false, // 关键点 2：允许非手势播放
+              mediaPlaybackRequiresUserGesture: false, // 允许非手势播放
               allowsInlineMediaPlayback: true,
-              userAgent: pcUserAgent, // 关键点 3：伪装成 PC 端浏览器，PC 版播放器限制较少
+              userAgent: pcUserAgent, // 伪装成 PC 端浏览器，PC 版播放器限制较少
             ),
             onWebViewCreated: (controller) {
               controller.addJavaScriptHandler(
@@ -49,7 +50,7 @@ class _BiliPlayerFixedPageState extends State<BiliPlayerFixedPage> {
             },
             onLoadStop: (controller, url) async {
               double volume = calcVolume();
-              // 关键点 4：页面加载完成后，注入 JS 脚本自动播放
+              // 页面加载完成后，注入 JS 脚本自动播放
               // 这里循环检测视频元素，直到播放成功
               await controller.evaluateJavascript(
                 source:
@@ -84,18 +85,23 @@ class _BiliPlayerFixedPageState extends State<BiliPlayerFixedPage> {
   }
 }
 
-URLRequest genUrlRequest(String bv, int page) {
+URLRequest genUrlRequest(Music musicIns) {
+  String bv = musicIns.bv;
+  int page = musicIns.page;
+
   return URLRequest(
     url: WebUri(
       "https://player.bilibili.com/player.html?bvid=$bv&page=$page&autoplay=1&muted=0",
     ),
-    // 每次切换视频都必须带上这个 Header，否则会加载失败
-    headers: {'Referer': 'https://www.bilibili.com/'},
+    headers: {
+      'Referer': 'https://www.bilibili.com/',
+    }, // 每次切换视频都必须带上这个 Header，否则会加载失败
   );
 }
 
 const pcUserAgent =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 double calcVolume() {
   double volume = 0.8 + MusicList().currentMusic().volume / 100.0;

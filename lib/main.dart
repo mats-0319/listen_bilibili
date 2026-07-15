@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:listen_b/data/playlist.dart';
-import 'package:listen_b/home.dart';
-import 'package:listen_b/data/theme.dart';
 import 'package:provider/provider.dart';
 
-import 'model/music_list.dart';
+import 'package:listen_b/data/playlist.dart';
+import 'package:listen_b/data/theme.dart';
+import 'package:listen_b/model/music_list.dart';
+import 'package:listen_b/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MusicList().initialize();
-  await _addDemoMusicIns();
+  await _initializeMusicListDemo();
 
   runApp(const App());
-}
-
-Future<void> _addDemoMusicIns() async {
-  if (MusicList().list.isEmpty) {
-    for (var i = 0; i < playlist.length; i++) {
-      await MusicList().create(playlist[i], atFirst: false);
-    }
-  }
 }
 
 class App extends StatelessWidget {
@@ -35,5 +27,13 @@ class App extends StatelessWidget {
         home: const HomePage(),
       ),
     );
+  }
+}
+
+Future<void> _initializeMusicListDemo() async {
+  if (MusicList().list.isEmpty) {
+    for (var i = playlist.length - 1; i >= 0; i--) {
+      await MusicList().create(playlist[i]);
+    }
   }
 }

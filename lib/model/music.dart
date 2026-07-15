@@ -5,7 +5,7 @@ class Music {
   String name = "";
   String bv = "";
   int page = 1; // 分p视频
-  int volume = 0; // offset, valid range: [-80,20]
+  int volume = 80; // offset, valid range: [-80,20]
 
   Music(this.name, this.bv, this.page, this.volume);
   Music.empty();
