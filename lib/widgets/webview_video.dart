@@ -18,6 +18,7 @@ class Video extends StatefulWidget {
 class VideoState extends State<Video> with WidgetsBindingObserver {
   late final WebViewController _controller;
   bool _disposed = false;
+  bool _stopFlag = false;
   bool _tickerEnabled = true;
 
   void play() => _loadVideo();
@@ -25,13 +26,24 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
   Future<void> _pause() =>
       _controller.runJavaScript("window.flutterPause?.();");
 
+  Future<void> _resume() =>
+      _controller.runJavaScript("window.flutterPlay?.();");
+
   // 彻底释放：把页面换成空白页，浏览器会停止 media session 并释放解码器。
   // 比单纯 pause 更彻底，且不受 JS 执行时机影响。
   Future<void> _stop() async {
-    if (_disposed) return;
-    _disposed = true;
-    await _pause();
-    await _controller.loadRequest(Uri.parse("about:blank"));
+    if (_stopFlag) {
+      return;
+    }
+
+    _stopFlag = true;
+
+    try {
+      await _pause();
+      await _controller.loadRequest(Uri.parse("about:blank"));
+    } catch (_) {
+      // 释放资源尽力尝试即可
+    }
   }
 
   @override
@@ -83,7 +95,7 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
     final enabled = TickerMode.valuesOf(context).enabled;
     if (enabled == _tickerEnabled) return;
     _tickerEnabled = enabled;
-    _tickerEnabled ? _loadVideo() : _pause(); // 回到首页时继续播放，离开时暂停
+    _tickerEnabled ? _resume() : _pause(); // 回到首页时继续播放，离开时暂停
   }
 
   @override
@@ -95,7 +107,7 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         _pause();
       case AppLifecycleState.resumed:
-        if (_tickerEnabled) _loadVideo();
+        if (_tickerEnabled) _resume();
       default:
     }
   }

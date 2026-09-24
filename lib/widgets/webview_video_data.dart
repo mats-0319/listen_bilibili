@@ -36,7 +36,7 @@ String jsScript(double volume) =>
         }, 500);
 
         // Dart -> JS
-        window.flutterSetVolume = function(volume) {
+        window.flutterSetVolume = function(volume) { // 暂未调用
           volume = Number(volume);
 
           if (Number.isNaN(volume)) {
@@ -58,7 +58,12 @@ String jsScript(double volume) =>
         window.flutterPause = function() {
           if (video) {
             video.pause();
-            video.currentTime = 0;
+          }
+        };
+        
+        window.flutterPlay = function() {
+          if (video) {
+            video.play().catch(() => {});
           }
         };
       })();
