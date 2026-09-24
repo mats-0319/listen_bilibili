@@ -1,4 +1,4 @@
-package com.mario.listen_b
+package com.mario.listen_bilibili
 
 import io.flutter.embedding.android.FlutterActivity
 

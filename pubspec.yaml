@@ -1,8 +1,8 @@
 name: listen_b
-description: ""
+description: "一个听歌软件，使用B站作为音源。"
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.12.2
@@ -10,23 +10,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  # 基础库
   uuid: ^4.5.3
-  flutter_inappwebview: ^6.1.5
-  provider: ^6.1.5+1
   path_provider: ^2.1.6
+  provider: ^6.1.5+1
   permission_handler: ^12.0.3
+
+  # 功能库
+  webview_flutter: ^4.14.1
+  webview_flutter_android: ^4.14.1
+  markdown_widget: ^2.3.2+8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^6.0.0
-  test: ^1.31.0
 
 flutter:
   assets:
-    - assets/icon_64.png
-    - assets/icon_2048.png
+    - assets/logo_256.png
+    - doc/manual.md
+    - doc/tech.md
 
   uses-material-design: true

@@ -1,9 +1,9 @@
 import 'package:listen_b/model/music.dart';
 
-var playlist = <Music>[
+final List<Music> defaultPlaylist = [
   Music("酣梦于彼岸深红", "BV1qX8gzQEaw", 1, 10),
   Music("悠忽舞于梦中", "BV1oJrYYYE9U", 1, 5),
-  Music("Unwritten in the starts", "BV1JtrKBXE9Y", 1, 5),
+  Music("若能触及群星", "BV1JtrKBXE9Y", 1, 5),
   Music("持续瞬间的永恒", "BV1KqnuzrEyU", 1, 0),
   Music("当飞鸟划过天空", "BV1sRj1zcEhV", 1, 0),
   Music("星炬不熄", "BV189F5zkEMX", 1, 0),
