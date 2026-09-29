@@ -32,11 +32,20 @@ class _HomePageState extends State<HomePage> {
                 color: theme.colorScheme.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Text(
-                "当前播放：${dataState.currentItem?.name} "
-                "(${dataState.currentIndex() + 1}/${dataState.list.length})",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                children: [
+                  const Text("当前播放："),
+                  Expanded(
+                    child: Text(
+                      dataState.currentItem?.name ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    " (${dataState.currentIndex() + 1}/${dataState.list.length})",
+                  ),
+                ],
               ),
             ),
             Expanded(
