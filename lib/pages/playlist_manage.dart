@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:listen_b/dart/global.dart';
+import 'package:listen_b/dart/result.dart';
 import 'package:listen_b/model/music.dart';
 import 'package:listen_b/model/playlist.dart';
 import 'package:listen_b/widgets/app_bar.dart';
@@ -27,8 +29,10 @@ class _PlaylistManagePageState extends State<PlaylistManagePage> {
             _functionBar(context),
             Expanded(
               child: ReorderableListView(
-                onReorderItem: (oldIndex, newIndex) =>
-                    dataState.reorder(oldIndex, newIndex), // todo: check res
+                onReorderItem: (oldIndex, newIndex) async {
+                  final res = await dataState.reorder(oldIndex, newIndex);
+                  if (res is Failure) setError(res.err);
+                },
                 children: _displayMusicList(context, dataState.list),
               ),
             ),
@@ -154,10 +158,9 @@ Widget _operates(BuildContext context, Music m) {
               ),
               TextButton(
                 onPressed: () async {
-                  await Playlist().deleteHard(m); // todo: res check
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
+                  final res = await Playlist().deleteHard(m);
+                  if (context.mounted) Navigator.of(context).pop();
+                  if (res is Failure) setError(res.err);
                 },
                 child: Text("确认", style: theme.textTheme.labelLarge),
               ),

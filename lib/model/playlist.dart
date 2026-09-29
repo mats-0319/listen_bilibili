@@ -17,15 +17,18 @@ class Playlist extends ChangeNotifier {
   factory Playlist() => _instance;
 
   List<Music> list = [];
-  int currentIndex = 0;
+  Music? currentItem;
 
-  Music currentMusic() => list[currentIndex];
+  int currentIndex() => currentItem != null ? list.indexOf(currentItem!) : -1;
 
   Future<Result<void>> initialize() async {
     Result<File> resFile = await _openFile(playlistFileName);
     if (resFile is Failure) {
       return resFile;
     }
+
+    list = [];
+    currentItem = null;
 
     try {
       final file = (resFile as Success<File>).data;
@@ -44,11 +47,11 @@ class Playlist extends ChangeNotifier {
       }
 
       final res = _hasDuplicate();
-      if (res is Failure) {
-        return res;
-      }
+      if (res is Failure) return res;
 
-      return play(0);
+      currentItem = list[0];
+
+      return Success(data: null);
     } catch (e) {
       notifyListeners();
       return Failure(err: e.toString());
@@ -56,11 +59,16 @@ class Playlist extends ChangeNotifier {
   }
 
   Result<void> next() {
-    if (list.isEmpty) {
-      return Failure(err: "Empty Playlist");
+    if (list.isEmpty) return Failure(err: "Empty Playlist");
+
+    if (currentItem == null) {
+      currentItem = list[0];
+    } else {
+      int index = _getIndex(currentItem!.id); // current index
+      index = (index + 1) % list.length; // valid next index
+      currentItem = list[index];
     }
 
-    currentIndex = (currentIndex + 1) % list.length;
     notifyListeners();
 
     return Success(data: null);
@@ -71,7 +79,7 @@ class Playlist extends ChangeNotifier {
       return Failure(err: "Invalid index: $index in length: ${list.length}");
     }
 
-    currentIndex = index;
+    currentItem = list[index];
     notifyListeners();
 
     return Success(data: null);
@@ -91,9 +99,7 @@ class Playlist extends ChangeNotifier {
 
   Future<Result<void>> update() async {
     final res = _hasDuplicate();
-    if (res is Failure) {
-      return res;
-    }
+    if (res is Failure) return res;
 
     return await synchronized(() {});
   }
@@ -101,9 +107,20 @@ class Playlist extends ChangeNotifier {
   Future<Result<void>> deleteHard(Music m) async {
     List<Music> backup = list.toList();
 
-    list.remove(m);
+    int delIndex = _getIndex(m.id);
+    if (delIndex < 0) return Success(data: null); // 删除不存在的元素视为成功
 
-    return await synchronized(() => list = backup);
+    list.removeAt(delIndex);
+
+    final backupCurrItem = currentItem;
+    if (currentItem != null && (currentItem!.id == m.id || list.isEmpty)) {
+      currentItem = null; // 删除的是正在播放的音乐或列表为空，停止播放
+    }
+
+    return await synchronized(() {
+      list = backup;
+      currentItem = backupCurrItem;
+    });
   }
 
   Future<Result<void>> reorder(int oldIndex, int newIndex) async {
@@ -118,9 +135,7 @@ class Playlist extends ChangeNotifier {
 
   Future<Result<void>> synchronized(void Function() revert) async {
     var res = await _write(list);
-    if (res is Failure) {
-      revert();
-    }
+    if (res is Failure) revert();
 
     notifyListeners();
 
@@ -134,6 +149,17 @@ class Playlist extends ChangeNotifier {
     return idSet.length == list.length
         ? Success(data: null)
         : Failure(err: "Has Duplicated Item(s)");
+  }
+
+  int _getIndex(String id) {
+    int index = 0;
+    for (; index < list.length; index++) {
+      if (list[index].id == id) break;
+    }
+
+    if (index >= list.length) index = -1;
+
+    return index;
   }
 }
 
@@ -150,9 +176,7 @@ Future<Result<void>> _write(List<Music> l) async {
 
 Future<Result<void>> _rename(String fileName, String data) async {
   final Directory? directory = await getExternalStorageDirectory();
-  if (directory == null) {
-    return Failure(err: "Get External Storage Failed");
-  }
+  if (directory == null) return Failure(err: "Get External Storage Failed");
 
   try {
     final tempFile = File("${directory.path}/$fileName.temp");
@@ -171,9 +195,7 @@ Future<Result<void>> _rename(String fileName, String data) async {
 
 Future<Result<File>> _openFile(String fileName) async {
   final Directory? directory = await getExternalStorageDirectory();
-  if (directory == null) {
-    return Failure(err: "Get External Storage Failed");
-  }
+  if (directory == null) return Failure(err: "Get External Storage Failed");
 
   final file = File("${directory.path}/$fileName");
   if (!await file.exists()) {

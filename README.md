@@ -21,6 +21,11 @@ Tools • Dart 3.13.2 • DevTools 2.60.0
 
 ## 常用命令
 
+设置包名：要求同时在gradle和kotlin设置，报名不匹配应用会在启动时出现白屏
+
+- gradle：`android/app/build.gradle.kts`文件的`namespace`和`applicationId`
+- kotlin：`android/app/src/main/kotlin/com/mario/listen_bilibili/MainActivity.kt`的`package`
+
 设置国内镜像：`android/gradle/wrapper/gradle-wrapper.properties`文件，
 `distributionUrl`的值修改为：`https\://mirrors.cloud.tencent.com/gradle/gradle-9.3.1-all.zip`
 

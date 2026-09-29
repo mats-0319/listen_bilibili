@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:listen_b/dart/global.dart';
+import 'package:listen_b/dart/result.dart';
 import 'package:listen_b/model/music.dart';
 import 'package:listen_b/model/playlist.dart';
 import 'package:listen_b/widgets/webview_video_data.dart';
@@ -9,7 +11,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 class Video extends StatefulWidget {
-  const Video({super.key});
+  const Video({super.key, required this.music});
+
+  final Music? music; // 应该播放的歌曲，为空表示停止播放
 
   @override
   State<Video> createState() => VideoState();
@@ -18,32 +22,19 @@ class Video extends StatefulWidget {
 class VideoState extends State<Video> with WidgetsBindingObserver {
   late final WebViewController _controller;
   bool _disposed = false;
-  bool _stopFlag = false;
   bool _tickerEnabled = true;
 
-  void play() => _loadVideo();
+  String? _loadedID;
 
-  Future<void> _pause() =>
-      _controller.runJavaScript("window.flutterPause?.();");
+  Future<void> _pause() => _runJS("window.flutterPause?.();");
 
-  Future<void> _resume() =>
-      _controller.runJavaScript("window.flutterPlay?.();");
+  Future<void> _resume() => _runJS("window.flutterPlay?.();");
 
-  // 彻底释放：把页面换成空白页，浏览器会停止 media session 并释放解码器。
-  // 比单纯 pause 更彻底，且不受 JS 执行时机影响。
-  Future<void> _stop() async {
-    if (_stopFlag) {
-      return;
-    }
-
-    _stopFlag = true;
-
-    try {
-      await _pause();
-      await _controller.loadRequest(Uri.parse("about:blank"));
-    } catch (_) {
-      // 释放资源尽力尝试即可
-    }
+  @override
+  void didUpdateWidget(covariant Video oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.music?.id == widget.music?.id) return;
+    _handleMusic();
   }
 
   @override
@@ -67,8 +58,8 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
         final data = jsonDecode(message.message);
 
         if (data["event"] == "ended") {
-          Playlist().next(); // todo: res check
-          _loadVideo();
+          final res = Playlist().next();
+          if (res is Failure) setError(res.err);
         }
       },
     );
@@ -78,14 +69,16 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
       NavigationDelegate(
         onPageFinished: (url) {
           if (_disposed) return; // 防止销毁阶段的调用触发脚本
-          final volume = _calcVolume(Playlist().currentMusic().volume);
-          // js: 自动播放 + 设置音量 + 播完通知
-          _controller.runJavaScript(jsScript(volume));
+
+          final m = Playlist().currentItem;
+          if (m == null) return;
+
+          _runJS(jsScript(_calcVolume(m.volume)));
         },
       ),
     );
 
-    _loadVideo();
+    _handleMusic();
   }
 
   @override
@@ -95,7 +88,12 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
     final enabled = TickerMode.valuesOf(context).enabled;
     if (enabled == _tickerEnabled) return;
     _tickerEnabled = enabled;
-    _tickerEnabled ? _resume() : _pause(); // 回到首页时继续播放，离开时暂停
+    if (_tickerEnabled) {
+      _handleMusic();
+      _resume(); // 回到首页时继续播放
+    } else {
+      _pause(); // 离开时暂停
+    }
   }
 
   @override
@@ -116,15 +114,42 @@ class VideoState extends State<Video> with WidgetsBindingObserver {
   void dispose() {
     _disposed = true;
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_stop());
+    unawaited(_release());
     super.dispose();
   }
 
-  void _loadVideo() {
-    final Music m = Playlist().currentMusic();
-    final url = _newVideoUrl(m.bv, m.page);
+  Future<void> _handleMusic() async {
+    if (_disposed) return;
 
-    _controller.loadRequest(url);
+    final m = widget.music;
+
+    if (_loadedID == m?.id) return; // 重复请求
+    if (m == null) {
+      await _release();
+      return;
+    }
+
+    if (!_tickerEnabled) return;
+
+    _loadedID = m.id;
+    _controller.loadRequest(_newVideoUrl(m.bv, m.page));
+
+    return;
+  }
+
+  Future<void> _release() async {
+    try {
+      await _pause();
+      await _controller.loadRequest(Uri.parse("about:blank"));
+    } catch (_) {}
+  }
+
+  Future<void> _runJS(String script) async {
+    if (_disposed) return;
+
+    try {
+      await _controller.runJavaScript(script);
+    } catch (_) {}
   }
 
   @override

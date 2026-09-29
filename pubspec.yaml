@@ -31,5 +31,6 @@ flutter:
     - assets/logo_256.png
     - doc/manual.md
     - doc/tech.md
+    - doc/lb_design.png
 
   uses-material-design: true

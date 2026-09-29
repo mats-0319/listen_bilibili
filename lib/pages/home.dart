@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:listen_b/dart/global.dart';
+import 'package:listen_b/dart/result.dart';
 import 'package:listen_b/model/playlist.dart';
 import 'package:listen_b/widgets/app_bar.dart';
 import 'package:listen_b/widgets/webview_video.dart';
@@ -12,8 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _videoKey = GlobalKey<VideoState>();
-
   @override
   Widget build(BuildContext context) {
     var dataState = context.watch<Playlist>();
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: [
-            Video(key: _videoKey),
+            Video(music: dataState.currentItem),
             Container(
               margin: EdgeInsets.symmetric(vertical: 30),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
@@ -33,9 +33,9 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
-                "当前播放：${dataState.currentMusic().name} "
-                "(${dataState.currentIndex + 1}/${dataState.list.length})",
-                maxLines: 2,
+                "当前播放：${dataState.currentItem?.name} "
+                "(${dataState.currentIndex() + 1}/${dataState.list.length})",
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -62,8 +62,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            dataState.play(index); // todo: res check
-                            _videoKey.currentState?.play();
+                            final res = dataState.play(index);
+                            if (res is Failure) {
+                              setError(res.err);
+                              return;
+                            }
                           },
                           child: Text("播放", style: theme.textTheme.labelMedium),
                         ),
