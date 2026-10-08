@@ -3,11 +3,11 @@ import 'package:listen_b/model/music.dart';
 final List<Music> defaultPlaylist = [
   Music("Saving Light", "BV1Vx4y1W76v", 1, 5),
   Music("Waking of a World", "BV1VZ421x7Ui", 1, 0),
-  Music("且听风吟", "BV13sNb67Ecb", 1, 10),
   Music("定玄", "BV1wJ7L64E3L", 1, 0),
   Music("风之所在", "BV1NbM36aEtm", 1, 15),
-  Music("玄翎谣", "BV1d3NK6oEtP", 1, 5),
+  Music("且听风吟", "BV13sNb67Ecb", 1, 10),
   Music("别有天", "BV1vRK26CE64", 1, 0),
+  Music("玄翎谣", "BV1d3NK6oEtP", 1, 5),
   Music("星炬不熄", "BV189F5zkEMX", 1, 0),
   Music("小小奇迹", "BV1D8ZyBXEgc", 1, 0),
   Music("未竟之旅", "BV1X6vHBME1i", 1, 0),
