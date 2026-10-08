@@ -26,16 +26,17 @@ class _HomePageState extends State<HomePage> {
           children: [
             Video(music: dataState.currentItem),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 30),
+              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text("当前播放："),
-                  Expanded(
+                  Flexible(
                     child: Text(
                       dataState.currentItem?.name ?? "",
                       maxLines: 1,

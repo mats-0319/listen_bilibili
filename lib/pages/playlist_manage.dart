@@ -112,7 +112,7 @@ Widget _details(BuildContext context, int index, Music m) {
           overflow: TextOverflow.ellipsis,
         ),
         Text(
-          "page:${m.page}, volume:${m.volume}",
+          "page: ${m.page}, volume: ${m.volume}",
           style: theme.textTheme.labelSmall,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
